@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetAmigo</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+</head>
+<body>
+
+<div class="pw">
+ <div class="ps">
+
+  <!-- STATUS BAR -->
+  <div class="sb">
+    <span id="relogioSb">9:41</span>
+    <span><i class="ti ti-wifi"></i> <i class="ti ti-battery-2"></i></span>
+  </div>
+
+  <div class="main">
+
+   <!-- ══ OVERLAY: NOTIFICAÇÕES ══ -->
+   <div class="overlay" id="notifOverlay" onclick="fecharOverlay('notifOverlay')">
+    <div class="modal-panel" onclick="event.stopPropagation()">
+     <div class="modal-header">
+      <span>Notificações</span>
+      <button class="modal-close" onclick="fecharOverlay('notifOverlay')"><i class="ti ti-x"></i></button>
+     </div>
+     <div id="notifLista">
+      <div class="notif-item" id="notif1" onclick="lerNotif('notif1')">
+       <div class="notif-dot" id="dot1"></div>
+       <div class="notif-txt"><p>Lembrete: Banho do Rex amanhã às 14h</p><span>Hoje, 09:00</span></div>
+      </div>
+      <div class="notif-item" id="notif2" onclick="lerNotif('notif2')">
+       <div class="notif-dot" id="dot2"></div>
+       <div class="notif-txt"><p>Promoção: 20% off em tosa esta semana!</p><span>Ontem, 18:30</span></div>
+      </div>
+      <div class="notif-item" id="notif3" onclick="lerNotif('notif3')" style="opacity:.55">
+       <div class="notif-dot" id="dot3" style="background:#DDE5F5"></div>
+       <div class="notif-txt"><p>Consulta do Bolinha concluída</p><span>22/06, 10:15</span></div>
+      </div>
+     </div>
+     <div style="padding:12px 16px;border-top:0.5px solid #EEF2F8">
+      <button class="btn-modal-sec" onclick="marcarTodasLidas()">Marcar todas como lidas</button>
+     </div>
+    </div>
+   </div>
+
+   <!-- ══ OVERLAY: MEUS PETS ══ -->
+   <div class="overlay" id="petsOverlay" onclick="fecharOverlay('petsOverlay')">
+    <div class="modal-panel" onclick="event.stopPropagation()">
+     <div class="modal-header">
+      <span>Meus Pets</span>
+      <button class="modal-close" onclick="fecharOverlay('petsOverlay')"><i class="ti ti-x"></i></button>
+     </div>
+     <div id="petsLista" style="padding:8px 0"></div>
+     <div style="padding:14px 16px;border-top:0.5px solid #EEF2F8">
+      <div class="add-pet-form">
+       <input class="finput" id="novoPetNome" placeholder="Nome do pet" style="margin-bottom:8px">
+       <select class="finput" id="novoPetTipo" style="margin-bottom:10px">
+        <option value="">Tipo de animal...</option>
+        <option>Cachorro</option><option>Gato</option><option>Coelho</option><option>Hamster</option><option>Pássaro</option>
+       </select>
+       <button class="btn-modal-pri" onclick="adicionarPet()"><i class="ti ti-plus"></i> Adicionar pet</button>
+      </div>
+     </div>
+    </div>
+   </div>
+
+   <!-- ══ OVERLAY: PONTOS ══ -->
+   <div class="overlay" id="pontosOverlay" onclick="fecharOverlay('pontosOverlay')">
+    <div class="modal-panel" onclick="event.stopPropagation()">
+     <div class="modal-header">
+      <span>Pontos e Recompensas</span>
+      <button class="modal-close" onclick="fecharOverlay('pontosOverlay')"><i class="ti ti-x"></i></button>
+     </div>
+     <div style="padding:16px">
+      <div class="pontos-saldo">
+       <div class="pontos-num" id="modalPontos">150</div>
+       <div class="pontos-lbl">pontos disponíveis</div>
+      </div>
+      <div class="sec-label" style="margin-top:14px">Extrato</div>
+      <div id="pontosExtrato"></div>
+      <button class="btn-modal-pri" style="margin-top:14px" onclick="resgatarPontos()">
+       <i class="ti ti-gift"></i> Resgatar desconto (100 pts = 10% off)
+      </button>
+     </div>
+    </div>
+   </div>
+
+   <!-- ══ OVERLAY: ENDEREÇO ══ -->
+   <div class="overlay" id="enderecoOverlay" onclick="fecharOverlay('enderecoOverlay')">
+    <div class="modal-panel" onclick="event.stopPropagation()">
+     <div class="modal-header">
+      <span>Meu Endereço</span>
+      <button class="modal-close" onclick="fecharOverlay('enderecoOverlay')"><i class="ti ti-x"></i></button>
+     </div>
+     <div style="padding:16px">
+      <div class="fwrap"><div class="flabel"><i class="ti ti-road"></i>Rua</div><input class="finput" id="endRua" placeholder="Rua / Avenida"></div>
+      <div class="frow" style="margin-top:8px">
+       <div class="fwrap"><div class="flabel"><i class="ti ti-hash"></i>Número</div><input class="finput" id="endNum" placeholder="Nº"></div>
+       <div class="fwrap"><div class="flabel"><i class="ti ti-home-2"></i>Compl.</div><input class="finput" id="endComp" placeholder="Apto, etc."></div>
+      </div>
+      <div class="fwrap" style="margin-top:8px"><div class="flabel"><i class="ti ti-building"></i>Bairro</div><input class="finput" id="endBairro" placeholder="Bairro"></div>
+      <div class="frow" style="margin-top:8px">
+       <div class="fwrap"><div class="flabel"><i class="ti ti-map"></i>Cidade</div><input class="finput" id="endCidade" placeholder="Cidade"></div>
+       <div class="fwrap"><div class="flabel"><i class="ti ti-map-2"></i>UF</div><input class="finput" id="endUf" placeholder="SP"></div>
+      </div>
+      <button class="btn-modal-pri" style="margin-top:14px" onclick="salvarEndereco()"><i class="ti ti-check"></i> Salvar endereço</button>
+     </div>
+    </div>
+   </div>
+
+   <!-- ══ OVERLAY: CARRINHO ══ -->
+   <div class="overlay" id="carrinhoOverlay" onclick="fecharOverlay('carrinhoOverlay')">
+    <div class="modal-panel" onclick="event.stopPropagation()">
+     <div class="modal-header">
+      <span>Meu Carrinho</span>
+      <button class="modal-close" onclick="fecharOverlay('carrinhoOverlay')"><i class="ti ti-x"></i></button>
+     </div>
+     <div id="carrinhoLista" style="max-height:280px;overflow-y:auto"></div>
+     <div style="padding:14px 16px;border-top:0.5px solid #EEF2F8">
+      <div class="rrow rtotal" style="margin-bottom:12px;padding:0">
+       <span class="rlabel" style="font-size:14px;color:#0D1B3E;font-weight:500">Total</span>
+       <span class="rval" style="font-size:17px;color:#185FA5" id="carrinhoTotalModal">R$ 0,00</span>
+      </div>
+      <button class="btn-modal-pri" onclick="finalizarCompra()"><i class="ti ti-credit-card"></i> Finalizar compra</button>
+      <button class="btn-modal-sec" style="margin-top:8px" onclick="limparCarrinho()"><i class="ti ti-trash"></i> Limpar carrinho</button>
+     </div>
+    </div>
+   </div>
+
+   <!-- ══════════════════════════════════════ -->
+   <!-- PÁGINA: HOME / AGENDAMENTO            -->
+   <!-- ══════════════════════════════════════ -->
+   <div class="pg act" id="pgHome">
+    <div class="topbar">
+     <div class="tb-row">
+      <div class="logo-pill"><i class="ti ti-paw"></i><span>PetAmigo</span></div>
+      <button class="tb-icon" onclick="abrirOverlay('notifOverlay')" aria-label="Notificações">
+       <i class="ti ti-bell"></i>
+       <span class="notif-badge" id="notifBadge">2</span>
+      </button>
+     </div>
+     <div class="tb-titles"><h1>Agende o cuidado<br>do seu pet</h1><p>Serviços com amor e carinho</p></div>
+    </div>
+    <div class="scroll">
+     <div class="hero-strip">
+      <div>
+       <div class="hs-text"><h2>20% off na primeira tosa</h2><p>Válido até 30 de junho</p></div>
+       <button class="hs-btn" onclick="navTo('Loja')">Ver oferta</button>
+      </div>
+      <div class="hs-icon">🐾</div>
+     </div>
+
+     <div class="sec-label">Escolha o serviço</div>
+     <div class="svc-grid">
+      <div class="svc-tile" onclick="selSvc(this,'Banho',45,'60 min')"><div class="svc-icon-w">🛁</div><div class="svc-name">Banho</div><div class="svc-price">R$ 45,00</div><div class="svc-dur">60 min</div></div>
+      <div class="svc-tile" onclick="selSvc(this,'Tosa',60,'90 min')"><div class="svc-icon-w">✂️</div><div class="svc-name">Tosa</div><div class="svc-price">R$ 60,00</div><div class="svc-dur">90 min</div></div>
+      <div class="svc-tile" onclick="selSvc(this,'Banho + Tosa',90,'2h')"><div class="svc-icon-w">✨</div><div class="svc-name">Banho + Tosa</div><div class="svc-price">R$ 90,00</div><div class="svc-dur">2 horas</div></div>
+      <div class="svc-tile" onclick="selSvc(this,'Consulta Vet',120,'45 min')"><div class="svc-icon-w">🩺</div><div class="svc-name">Consulta Vet</div><div class="svc-price">R$ 120,00</div><div class="svc-dur">45 min</div></div>
+     </div>
+
+     <div class="sec-label">Escolha a data</div>
+     <div class="date-grid">
+      <div class="dc" onclick="selData(this,'Seg, 23/06')"><div class="dd">seg</div><div class="dn">23</div><div class="dm">jun</div></div>
+      <div class="dc" onclick="selData(this,'Ter, 24/06')"><div class="dd">ter</div><div class="dn">24</div><div class="dm">jun</div></div>
+      <div class="dc" onclick="selData(this,'Qua, 25/06')"><div class="dd">qua</div><div class="dn">25</div><div class="dm">jun</div></div>
+      <div class="dc" onclick="selData(this,'Qui, 26/06')"><div class="dd">qui</div><div class="dn">26</div><div class="dm">jun</div></div>
+     </div>
+
+     <div class="sec-label">Dados do pet</div>
+     <div class="fcard">
+      <div class="frow">
+       <div class="fwrap"><div class="flabel"><i class="ti ti-user"></i>Tutor</div><input class="finput" id="inTutor" type="text" placeholder="Seu nome"></div>
+       <div class="fwrap"><div class="flabel"><i class="ti ti-heart"></i>Pet</div><input class="finput" id="inPet" type="text" placeholder="Nome do pet"></div>
+      </div>
+      <div class="fwrap"><div class="flabel"><i class="ti ti-list"></i>Animal</div>
+       <select class="finput" id="inAnimal">
+        <option value="">Selecione...</option>
+        <option>Cachorro</option><option>Gato</option><option>Coelho</option><option>Hamster</option><option>Pássaro</option>
+       </select>
+      </div>
+      <div class="fwrap" style="margin-bottom:0"><div class="flabel"><i class="ti ti-phone"></i>Telefone</div><input class="finput" id="inTel" type="tel" placeholder="(00) 00000-0000"></div>
+     </div>
+     <div class="err-bar" id="errBar"><i class="ti ti-alert-circle"></i><span id="errMsg">Preencha todos os campos!</span></div>
+     <button class="btn-p" onclick="agendar()"><i class="ti ti-calendar-check"></i>Confirmar agendamento</button>
+     <div style="height:8px"></div>
+    </div>
+    <nav class="bnav" id="navHome">
+     <div class="ni act" onclick="navTo('Home')"><i class="ti ti-home nico"></i><span class="ni-lbl">Início</span><div class="ndot"></div></div>
+     <div class="ni" onclick="navTo('Agenda')"><i class="ti ti-calendar nico"></i><span class="ni-lbl">Agenda</span><div class="ndot"></div></div>
+     <div class="ni" onclick="navTo('Loja')"><i class="ti ti-shopping-bag nico"></i><span class="ni-lbl">Loja</span><div class="ndot"></div></div>
+     <div class="ni" onclick="navTo('Perfil')"><i class="ti ti-user nico"></i><span class="ni-lbl">Perfil</span><div class="ndot"></div></div>
+    </nav>
+   </div>
+
+   <!-- ══════════════════════════════════════ -->
+   <!-- PÁGINA: CONFIRMAÇÃO                    -->
+   <!-- ══════════════════════════════════════ -->
+   <div class="pg" id="pgConfirm">
+    <div class="scroll">
+     <div class="confirm-band">
+      <div class="chk-ring"><i class="ti ti-check"></i></div>
+      <h2 id="cfTitle">Agendado!</h2><p id="cfSub">Até lá!</p>
+     </div>
+     <div class="receipt">
+      <div class="rrow"><span class="rlabel"><i class="ti ti-user"></i>Tutor</span><span class="rval" id="rTutor">—</span></div>
+      <div class="rrow"><span class="rlabel"><i class="ti ti-heart"></i>Pet</span><span class="rval" id="rPet">—</span></div>
+      <div class="rrow"><span class="rlabel"><i class="ti ti-category"></i>Animal</span><span class="rval" id="rAnimal">—</span></div>
+      <div class="rrow"><span class="rlabel"><i class="ti ti-sparkles"></i>Serviço</span><span class="svc-badge" id="rSvc">—</span></div>
+      <div class="rrow"><span class="rlabel"><i class="ti ti-calendar"></i>Data</span><span class="rval" id="rData">—</span></div>
+      <div class="rrow"><span class="rlabel"><i class="ti ti-clock"></i>Duração</span><span class="rval" id="rDur">—</span></div>
+      <div class="rrow rtotal"><span class="rlabel"><i class="ti ti-receipt"></i>Total</span><span class="rval" id="rTotal">—</span></div>
+     </div>
+     <div class="tags-row">
+      <div class="tag"><i class="ti ti-check"></i>Confirmado</div>
+      <div class="tag"><i class="ti ti-bell"></i>Lembrete enviado</div>
+      <div class="tag"><i class="ti ti-map-pin"></i><span id="tagEndereco">Rua das Flores, 142</span></div>
+     </div>
+     <button class="btn-p" onclick="navTo('Agenda')"><i class="ti ti-calendar"></i>Ver minha agenda</button>
+     <button class="btn-out" onclick="voltarHome()" style="margin-top:6px"><i class="ti ti-plus"></i>Novo agendamento</button>
+     <div style="height:14px"></div>
+    </div>
+    <nav class="bnav">
+     <div class="ni" onclick="navTo('Home')"><i class="ti ti-home nico"></i><span class="ni-lbl">Início</span><div class="ndot"></div></div>
+     <div class="ni act" onclick="navTo('Agenda')"><i class="ti ti-calendar nico"></i><span class="ni-lbl">Agenda</span><div class="ndot"></div></div>
+     <div class="ni" onclick="navTo('Loja')"><i class="ti ti-shopping-bag nico"></i><span class="ni-lbl">Loja</span><div class="ndot"></div></div>
+     <div class="ni" onclick="navTo('Perfil')"><i class="ti ti-user nico"></i><span class="ni-lbl">Perfil</span><div class="ndot"></div></div>
+    </nav>
+   </div>
+
+   <!-- ══════════════════════════════════════ -->
+   <!-- PÁGINA: AGENDA                         -->
+   <!-- ══════════════════════════════════════ -->
+   <div class="pg" id="pgAgenda">
+    <div class="topbar">
+     <div class="tb-row">
+      <div class="logo-pill"><i class="ti ti-paw"></i><span>PetAmigo</span></div>
+      <button class="tb-icon" onclick="abrirOverlay('notifOverlay')" aria-label="Notificações">
+       <i class="ti ti-bell"></i>
+       <span class="notif-badge" id="notifBadge2">2</span>
+      </button>
+     </div>
+     <div class="tb-titles"><h1>Minha agenda</h1><p id="agSub">Nenhum agendamento ainda</p></div>
+    </div>
+    <div class="scroll">
+     <div class="sec-label">Próximos agendamentos</div>
+     <div class="agenda-list" id="agendaList">
+      <div class="empty-state"><i class="ti ti-calendar-off"></i><p>Nenhum agendamento ainda.<br>Agende um serviço na tela inicial!</p></div>
+     </div>
+     <div class="sec-label">Histórico</div>
+     <div class="agenda-list" id="historicoList">
+      <div class="ag-card">
+       <div class="ag-date-box"><div class="adb-d">10</div><div class="adb-m">jun</div></div>
+       <div class="ag-info"><h3>Banho + Tosa — Luna</h3><p>Gato • 2 horas</p><div class="ag-badge done"><i class="ti ti-check"></i>Concluído</div></div>
+       <span class="ag-price">R$ 90,00</span>
+      </div>
+      <div class="ag-card">
+       <div class="ag-date-box"><div class="adb-d">02</div><div class="adb-m">jun</div></div>
+       <div class="ag-info"><h3>Consulta Vet — Rex</h3><p>Cachorro • 45 min</p><div class="ag-badge done"><i class="ti ti-check"></i>Concluído</div></div>
+       <span class="ag-price">R$ 120,00</span>
+      </div>
+     </div>
+     <div style="height:8px"></div>
+    </div>
+    <nav class="bnav">
+     <div class="ni" onclick="navTo('Home')"><i class="ti ti-home nico"></i><span class="ni-lbl">Início</span><div class="ndot"></div></div>
+     <div class="ni act" onclick="navTo('Agenda')"><i class="ti ti-calendar nico"></i><span class="ni-lbl">Agenda</span><div class="ndot"></div></div>
+     <div class="ni" onclick="navTo('Loja')"><i class="ti ti-shopping-bag nico"></i><span class="ni-lbl">Loja</span><div class="ndot"></div></div>
+     <div class="ni" onclick="navTo('Perfil')"><i class="ti ti-user nico"></i><span class="ni-lbl">Perfil</span><div class="ndot"></div></div>
+    </nav>
+   </div>
+
+   <!-- ══════════════════════════════════════ -->
+   <!-- PÁGINA: LOJA                           -->
+   <!-- ══════════════════════════════════════ -->
+   <div class="pg" id="pgLoja">
+    <div class="topbar">
+     <div class="tb-row">
+      <div class="logo-pill"><i class="ti ti-paw"></i><span>PetAmigo</span></div>
+      <button class="tb-icon" onclick="abrirOverlay('carrinhoOverlay'); renderCarrinho()" aria-label="Carrinho">
+       <i class="ti ti-shopping-cart"></i>
+       <span class="notif-badge" id="cartBadge" style="display:none">0</span>
+      </button>
+     </div>
+     <div class="tb-titles"><h1>Loja PetAmigo</h1><p>Produtos para seu bichinho</p></div>
+    </div>
+    <div class="scroll">
+     <div class="cart-toast" id="cartToast">Produto adicionado ao carrinho!</div>
+     <div class="cart-bar" onclick="abrirOverlay('carrinhoOverlay'); renderCarrinho()">
+      <span><i class="ti ti-shopping-cart"></i>Ver carrinho</span>
+      <div style="display:flex;align-items:center;gap:8px">
+       <span style="color:#6B8CC7;font-size:12px" id="cartTotal">R$ 0,00</span>
+       <div class="cart-count" id="cartCount">0</div>
+      </div>
+     </div>
+     <div class="sec-label">Rações</div>
+     <div class="loja-grid">
+      <div class="prod-card"><div class="prod-img">🐶</div><div class="prod-info"><div class="prod-name">Ração Premium Cão</div><div class="prod-sub">15kg • Adulto</div><div class="prod-row"><span class="prod-price">R$ 189,90</span><button class="prod-btn" onclick="addCart(this,189.90,'Ração Cão 15kg')" aria-label="Adicionar"><i class="ti ti-plus"></i></button></div></div></div>
+      <div class="prod-card"><div class="prod-img">🐱</div><div class="prod-info"><div class="prod-name">Ração Gourmet Gato</div><div class="prod-sub">10kg • Castrado</div><div class="prod-row"><span class="prod-price">R$ 149,90</span><button class="prod-btn" onclick="addCart(this,149.90,'Ração Gato 10kg')" aria-label="Adicionar"><i class="ti ti-plus"></i></button></div></div></div>
+     </div>
+     <div class="sec-label">Acessórios</div>
+     <div class="loja-grid">
+      <div class="prod-card"><div class="prod-img">🦴</div><div class="prod-info"><div class="prod-name">Osso Borracha</div><div class="prod-sub">Mordedor • M</div><div class="prod-row"><span class="prod-price">R$ 29,90</span><button class="prod-btn" onclick="addCart(this,29.90,'Osso Borracha')" aria-label="Adicionar"><i class="ti ti-plus"></i></button></div></div></div>
+      <div class="prod-card"><div class="prod-img">🎀</div><div class="prod-info"><div class="prod-name">Coleira Colorida</div><div class="prod-sub">Ajustável • P/M/G</div><div class="prod-row"><span class="prod-price">R$ 39,90</span><button class="prod-btn" onclick="addCart(this,39.90,'Coleira Colorida')" aria-label="Adicionar"><i class="ti ti-plus"></i></button></div></div></div>
+      <div class="prod-card"><div class="prod-img">🛏️</div><div class="prod-info"><div class="prod-name">Caminha Pelúcia</div><div class="prod-sub">Lavável • G</div><div class="prod-row"><span class="prod-price">R$ 99,90</span><button class="prod-btn" onclick="addCart(this,99.90,'Caminha Pelúcia')" aria-label="Adicionar"><i class="ti ti-plus"></i></button></div></div></div>
+      <div class="prod-card"><div class="prod-img">🧴</div><div class="prod-info"><div class="prod-name">Shampoo Natural</div><div class="prod-sub">500ml • Todos</div><div class="prod-row"><span class="prod-price">R$ 24,90</span><button class="prod-btn" onclick="addCart(this,24.90,'Shampoo Natural')" aria-label="Adicionar"><i class="ti ti-plus"></i></button></div></div></div>
+     </div>
+     <div style="height:8px"></div>
+    </div>
+    <nav class="bnav">
+     <div class="ni" onclick="navTo('Home')"><i class="ti ti-home nico"></i><span class="ni-lbl">Início</span><div class="ndot"></div></div>
+     <div class="ni" onclick="navTo('Agenda')"><i class="ti ti-calendar nico"></i><span class="ni-lbl">Agenda</span><div class="ndot"></div></div>
+     <div class="ni act" onclick="navTo('Loja')"><i class="ti ti-shopping-bag nico"></i><span class="ni-lbl">Loja</span><div class="ndot"></div></div>
+     <div class="ni" onclick="navTo('Perfil')"><i class="ti ti-user nico"></i><span class="ni-lbl">Perfil</span><div class="ndot"></div></div>
+    </nav>
+   </div>
+
+   <!-- ══════════════════════════════════════ -->
+   <!-- PÁGINA: PERFIL                         -->
+   <!-- ══════════════════════════════════════ -->
+   <div class="pg" id="pgPerfil">
+    <div class="perfil-header">
+     <div class="avatar-ring"><i class="ti ti-paw"></i></div>
+     <h2 id="perfilNome">Meu Perfil</h2>
+     <p id="perfilSub">Tutor PetAmigo</p>
+     <button class="edit-btn" onclick="editarPerfil()"><i class="ti ti-edit"></i> Editar perfil</button>
+    </div>
+    <div class="scroll">
+     <div class="sec-label">Resumo</div>
+     <div class="stats-row">
+      <div class="stat-box"><div class="stat-num" id="statAg">2</div><div class="stat-lbl">Agendamentos</div></div>
+      <div class="stat-box"><div class="stat-num" id="statPets">2</div><div class="stat-lbl">Pets</div></div>
+      <div class="stat-box"><div class="stat-num" id="statPts">150</div><div class="stat-lbl">Pontos</div></div>
+     </div>
+     <div class="sec-label">Minha conta</div>
+     <div class="menu-list">
+      <div class="menu-item" onclick="abrirPets()">
+       <div class="menu-item-icon blue"><i class="ti ti-paw"></i></div>
+       <div class="menu-item-text"><p>Meus pets</p><span id="menuPetsSub">Rex, Luna</span></div>
+       <i class="ti ti-chevron-right menu-item-arrow"></i>
+      </div>
+      <div class="menu-item" onclick="navTo('Agenda')">
+       <div class="menu-item-icon yel"><i class="ti ti-calendar"></i></div>
+       <div class="menu-item-text"><p>Histórico de serviços</p><span>Ver todos</span></div>
+       <i class="ti ti-chevron-right menu-item-arrow"></i>
+      </div>
+      <div class="menu-item" onclick="abrirPontos()">
+       <div class="menu-item-icon grn"><i class="ti ti-star"></i></div>
+       <div class="menu-item-text"><p>Pontos e recompensas</p><span id="menuPontosSub">150 pontos disponíveis</span></div>
+       <i class="ti ti-chevron-right menu-item-arrow"></i>
+      </div>
+     </div>
+     <div class="sec-label">Preferências</div>
+     <div class="menu-list">
+      <div class="menu-item" onclick="abrirOverlay('notifOverlay')">
+       <div class="menu-item-icon blue"><i class="ti ti-bell"></i></div>
+       <div class="menu-item-text"><p>Notificações</p><span id="menuNotifSub">2 não lidas</span></div>
+       <i class="ti ti-chevron-right menu-item-arrow"></i>
+      </div>
+      <div class="menu-item" onclick="abrirEndereco()">
+       <div class="menu-item-icon yel"><i class="ti ti-map-pin"></i></div>
+       <div class="menu-item-text"><p>Endereço</p><span id="menuEndSub">Rua das Flores, 142</span></div>
+       <i class="ti ti-chevron-right menu-item-arrow"></i>
+      </div>
+     </div>
+     <div style="height:6px"></div>
+     <button class="logout-btn" onclick="fazerLogout()"><i class="ti ti-logout"></i>Sair da conta</button>
+     <div style="height:12px"></div>
+    </div>
+    <nav class="bnav">
+     <div class="ni" onclick="navTo('Home')"><i class="ti ti-home nico"></i><span class="ni-lbl">Início</span><div class="ndot"></div></div>
+     <div class="ni" onclick="navTo('Agenda')"><i class="ti ti-calendar nico"></i><span class="ni-lbl">Agenda</span><div class="ndot"></div></div>
+     <div class="ni" onclick="navTo('Loja')"><i class="ti ti-shopping-bag nico"></i><span class="ni-lbl">Loja</span><div class="ndot"></div></div>
+     <div class="ni act" onclick="navTo('Perfil')"><i class="ti ti-user nico"></i><span class="ni-lbl">Perfil</span><div class="ndot"></div></div>
+    </nav>
+   </div>
+
+  </div>
+ </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
